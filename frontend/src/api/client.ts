@@ -6,6 +6,22 @@ interface ApiEnvelope<T> {
   error?: { code: string; message: string }
 }
 
+export class ApiError extends Error {
+  readonly status: number
+  readonly code: string
+
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+  ) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+  }
+}
+
 let accessToken: string | null = null
 
 export function setAccessToken(token: string | null) {
@@ -15,7 +31,11 @@ export function setAccessToken(token: string | null) {
 async function parseResponse<T>(response: Response): Promise<T> {
   const body = (await response.json()) as ApiEnvelope<T>
   if (!response.ok || !body.success) {
-    throw new Error(body.error?.message ?? 'No se pudo completar la operación.')
+    throw new ApiError(
+      response.status,
+      body.error?.code ?? 'REQUEST_FAILED',
+      body.error?.message ?? 'No se pudo completar la operación.',
+    )
   }
   return body.data
 }
