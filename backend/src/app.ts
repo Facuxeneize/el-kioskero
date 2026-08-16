@@ -11,7 +11,9 @@ import { authenticate } from './middlewares/authenticate.js'
 import { errorHandler } from './middlewares/error-handler.js'
 import { notFound } from './middlewares/not-found.js'
 import { authRouter } from './modules/auth/auth.routes.js'
+import { dashboardRouter } from './modules/dashboard/dashboard.routes.js'
 import { productRouter } from './modules/products/product.routes.js'
+import { saleRouter } from './modules/sales/sale.routes.js'
 import { productStockRouter, stockRouter } from './modules/stock/stock.routes.js'
 import { asyncHandler } from './shared/http/async-handler.js'
 import { sendSuccess } from './shared/http/response.js'
@@ -37,6 +39,8 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/products', authenticate, productRouter)
 app.use('/api/v1/products/:id/stock', authenticate, productStockRouter)
 app.use('/api/v1/stock', authenticate, stockRouter)
+app.use('/api/v1/sales', authenticate, saleRouter)
+app.use('/api/v1/dashboard', authenticate, dashboardRouter)
 
 app.use(notFound)
 app.use(errorHandler)

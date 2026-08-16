@@ -37,20 +37,20 @@
 - Actualización de producto y movimiento dentro de una misma transacción.
 - Resultado verificable: no existe una operación normal que deje stock negativo o cambie stock sin auditoría.
 
-### 5. Ventas — funcional en demo
+### 5. Ventas — implementado y validado en MySQL
 
 - Carrito orientado al escáner HID, búsqueda manual y cantidades.
 - Creación atómica de venta, ítems, descuento de stock y movimientos.
 - Clave de idempotencia para evitar doble confirmación.
 - Resultado verificable: si un ítem falla, no se persiste ninguna parte de la venta.
 
-### 6. Historial y anulaciones — funcional en demo
+### 6. Historial y anulaciones — implementado y validado en MySQL
 
 - Filtros por fecha/estado, detalle con snapshot histórico y anulación.
 - Reintegro de unidades con movimientos `SALE_VOID` en una transacción.
 - Resultado verificable: una venta anulada sigue visible y no puede anularse dos veces.
 
-### 7. Dashboard — funcional en demo
+### 7. Dashboard — implementado y validado en MySQL
 
 - Facturación, cantidad de ventas y unidades del día.
 - Stock bajo/sin stock, top cinco y últimas ventas.
@@ -70,11 +70,9 @@
 
 ## Orden de las próximas iteraciones
 
-1. Habilitar WSL/Docker o conectar una instancia MySQL y aplicar la migración inicial.
-2. Trasladar ventas, anulaciones y dashboard del contrato demo a servicios Prisma.
-3. Probar integración real de login → producto → stock → venta → anulación.
-4. Ampliar las pruebas automatizadas de los flujos críticos.
-5. Preparar CI, migraciones de producción y despliegue.
+1. Convertir el smoke test persistente en una prueba automatizada de CI.
+2. Ampliar las pruebas de concurrencia sobre confirmaciones simultáneas.
+3. Preparar migraciones de producción y despliegue.
 
 ## Corte 2 validado
 
@@ -84,7 +82,31 @@ El modo demostración ya permite recorrer todas las secciones del MVP:
 LOGIN → PRODUCTOS → STOCK → NUEVA VENTA → HISTORIAL → ANULACIÓN → DASHBOARD
 ```
 
-Las operaciones respetan stock disponible, snapshot histórico, idempotencia de venta y devolución de unidades al anular. La persistencia en MySQL de ventas, historial y dashboard corresponde al siguiente corte.
+Las operaciones respetan stock disponible, snapshot histórico, idempotencia de venta y devolución de unidades al anular. Este flujo sirvió como contrato para la implementación persistente del corte siguiente.
+
+## Corte 3 implementado
+
+Los contratos de ventas, anulaciones e indicadores ya cuentan con implementación Prisma/MySQL:
+
+- transacción `Serializable` con reintentos ante conflictos;
+- descuento condicional para impedir stock negativo;
+- snapshot histórico de cada ítem;
+- clave de idempotencia única;
+- anulación transaccional y movimientos `SALE_VOID`;
+- métricas diarias en zona horaria de Buenos Aires;
+- ranking de productos y últimas ventas;
+- serialización segura de `BIGINT` y `DECIMAL`.
+
+## Integración MySQL validada
+
+El flujo real fue ejecutado contra MySQL 8.4 con ambas migraciones aplicadas:
+
+```text
+LOGIN → PRODUCTO → INGRESO +10 → VENTA -3 → RECHAZO DE SOBREVENTA
+      → IDEMPOTENCIA → DASHBOARD → ANULACIÓN +3 → HISTORIAL
+```
+
+La comprobación directa en base confirmó una venta `VOIDED`, stock final restaurado a `10` y movimientos `IN`, `SALE` y `SALE_VOID` consistentes.
 
 ## Riesgos controlados desde el inicio
 

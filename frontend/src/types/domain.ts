@@ -34,7 +34,7 @@ export interface SaleItem {
 
 export interface Sale {
   id: string
-  saleNumber: number
+  saleNumber: string | number
   total: string
   totalUnits: number
   status: 'COMPLETED' | 'VOIDED'
