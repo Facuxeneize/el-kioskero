@@ -1,4 +1,4 @@
-# Sistema Kiosko
+# El Kioskero
 
 MVP web para administrar productos, stock y ventas de un único kiosco. El repositorio sigue el documento de requisitos y está organizado como monorepo:
 

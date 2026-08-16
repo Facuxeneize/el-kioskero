@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
+import kioskeroLogo from '../../assets/kioskero-logo.png'
 import { useAuth } from './auth-context'
 
 const schema = z.object({
@@ -35,7 +36,8 @@ export function LoginPage() {
   return (
     <main className="login-page">
       <section className="login-brand">
-        <div className="brand-mark">K</div><p className="eyebrow">SISTEMA KIOSKO</p>
+        <img className="login-logo" src={kioskeroLogo} alt="El Kioskero" />
+        <p className="eyebrow">EL KIOSKERO</p>
         <h1>Todo el negocio,<br />en un solo lugar.</h1><p>Productos, stock y ventas rápidas. Sin vueltas.</p>
       </section>
       <section className="login-panel">

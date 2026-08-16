@@ -8,7 +8,7 @@ import { logger } from './config/logger.js'
 const server = createServer(app)
 
 server.listen(env.PORT, () => {
-  logger.info({ port: env.PORT }, 'API de Kiosko iniciada')
+  logger.info({ port: env.PORT }, 'API de El Kioskero iniciada')
 })
 
 async function shutdown(signal: string) {
