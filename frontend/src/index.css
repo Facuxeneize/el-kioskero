@@ -70,13 +70,18 @@ th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacin
 .login-brand { padding:8vw; color:white; background:radial-gradient(circle at 15% 85%, #33775a 0, transparent 35%), #113f2e; display:flex; flex-direction:column; justify-content:center; }
 .login-logo { width:clamp(150px, 15vw, 210px); aspect-ratio:1; object-fit:cover; border-radius:50%; margin-bottom:42px; box-shadow:0 20px 55px #061a1245; }
 .login-brand .eyebrow { color:var(--lime); }
-.login-brand h1 { max-width:600px; font-size:clamp(42px, 5vw, 72px); line-height:1.05; letter-spacing:-3px; margin-bottom:24px; }
+.login-brand h1 { max-width:600px; font-size:clamp(38px, 4.2vw, 60px); line-height:1.07; letter-spacing:-2.5px; margin-bottom:24px; }
 .login-brand > p:last-child { color:#bdd1c8; font-size:18px; }
 .login-panel { display:grid; place-items:center; padding:40px; }
 .login-card { width:min(410px, 100%); display:grid; gap:18px; }
 .login-card h2 { font-size:34px; margin-bottom:7px; }
 .login-card label { display:grid; gap:8px; font-size:13px; font-weight:700; }
 .login-card input { height:48px; border:1px solid #cfd8d1; border-radius:9px; padding:0 13px; outline:none; background:white; }
+.password-field { position:relative; }
+.password-field input { width:100%; padding-right:72px; }
+.password-field button { position:absolute; top:50%; right:8px; min-width:54px; height:32px; transform:translateY(-50%); color:var(--green); background:#edf5f0; border:0; border-radius:7px; cursor:pointer; font-size:11px; font-weight:800; }
+.password-field button:hover { background:#dcece3; }
+.password-field button:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
 .field-error { color:#a42b2b; margin-top:-12px; }
 .alert { background:#fff0f0; color:#9f2525; border:1px solid #f5cccc; border-radius:9px; padding:12px 14px; font-size:13px; }
 @media (max-width:900px) { .app-shell{grid-template-columns:76px 1fr}.sidebar{padding-inline:10px}.logo{justify-content:center;padding-inline:0}.logo strong,.sidebar nav a:not(.active){font-size:0}.sidebar nav a{justify-content:center}.sidebar nav a.active{font-size:0}.sidebar nav a span{font-size:20px}.profile div,.profile button{display:none}.profile{display:flex;justify-content:center}.metric-grid{grid-template-columns:repeat(2,1fr)}.dashboard-grid{grid-template-columns:1fr}.login-page{grid-template-columns:1fr}.login-brand{display:none} }

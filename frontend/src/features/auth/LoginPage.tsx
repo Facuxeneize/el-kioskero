@@ -18,6 +18,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const [serverError, setServerError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const { register, handleSubmit, formState } = useForm<LoginInput>({ resolver: zodResolver(schema) })
 
   if (user) return <Navigate to="/" replace />
@@ -45,7 +46,7 @@ export function LoginPage() {
           <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu cuenta de administrador.</p></div>
           <label>Email<input autoFocus autoComplete="email" type="email" {...register('email')} /></label>
           {formState.errors.email && <small className="field-error">{formState.errors.email.message}</small>}
-          <label>Contraseña<input autoComplete="current-password" type="password" {...register('password')} /></label>
+          <label>Contraseña<div className="password-field"><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} {...register('password')} /><button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Ver'}</button></div></label>
           {formState.errors.password && <small className="field-error">{formState.errors.password.message}</small>}
           {serverError && <div className="alert">{serverError}</div>}
           <button className="button primary" disabled={formState.isSubmitting} type="submit">{formState.isSubmitting ? 'Ingresando…' : 'Ingresar'}</button>
