@@ -10,6 +10,8 @@
     "dev": "npm run dev --workspace backend",
     "dev:backend": "npm run dev --workspace backend",
     "dev:frontend": "npm run dev --workspace frontend",
+    "demo:backend": "npm run dev:demo --workspace backend",
+    "demo:frontend": "npm run dev --workspace frontend -- --mode demo",
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"

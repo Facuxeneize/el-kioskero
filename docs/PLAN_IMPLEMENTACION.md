@@ -25,32 +25,32 @@
 - Cookies HttpOnly, rate limit, Helmet, CORS y validación Zod.
 - Resultado verificable: las rutas privadas rechazan tokens inválidos y el logout revoca la sesión.
 
-### 3. Productos — iniciado
+### 3. Productos — funcional en demo
 
 - Alta, consulta, búsqueda, edición y baja lógica.
 - Código de barras único e indexado.
 - Resultado verificable: un producto histórico nunca se elimina físicamente.
 
-### 4. Stock — iniciado
+### 4. Stock — funcional en demo
 
 - Ingreso, ajuste por conteo real y consulta de movimientos.
 - Actualización de producto y movimiento dentro de una misma transacción.
 - Resultado verificable: no existe una operación normal que deje stock negativo o cambie stock sin auditoría.
 
-### 5. Ventas
+### 5. Ventas — funcional en demo
 
 - Carrito orientado al escáner HID, búsqueda manual y cantidades.
 - Creación atómica de venta, ítems, descuento de stock y movimientos.
 - Clave de idempotencia para evitar doble confirmación.
 - Resultado verificable: si un ítem falla, no se persiste ninguna parte de la venta.
 
-### 6. Historial y anulaciones
+### 6. Historial y anulaciones — funcional en demo
 
 - Filtros por fecha/estado, detalle con snapshot histórico y anulación.
 - Reintegro de unidades con movimientos `SALE_VOID` en una transacción.
 - Resultado verificable: una venta anulada sigue visible y no puede anularse dos veces.
 
-### 7. Dashboard
+### 7. Dashboard — funcional en demo
 
 - Facturación, cantidad de ventas y unidades del día.
 - Stock bajo/sin stock, top cinco y últimas ventas.
@@ -70,12 +70,21 @@
 
 ## Orden de las próximas iteraciones
 
-1. Levantar MySQL y aplicar la migración inicial.
-2. Probar integración de login → producto → ingreso de stock.
-3. Implementar venta y rollback por stock insuficiente.
-4. Conectar las pantallas reales de productos y stock.
-5. Completar historial, anulación y dashboard.
-6. Automatizar pruebas y desplegar.
+1. Habilitar WSL/Docker o conectar una instancia MySQL y aplicar la migración inicial.
+2. Trasladar ventas, anulaciones y dashboard del contrato demo a servicios Prisma.
+3. Probar integración real de login → producto → stock → venta → anulación.
+4. Ampliar las pruebas automatizadas de los flujos críticos.
+5. Preparar CI, migraciones de producción y despliegue.
+
+## Corte 2 validado
+
+El modo demostración ya permite recorrer todas las secciones del MVP:
+
+```text
+LOGIN → PRODUCTOS → STOCK → NUEVA VENTA → HISTORIAL → ANULACIÓN → DASHBOARD
+```
+
+Las operaciones respetan stock disponible, snapshot histórico, idempotencia de venta y devolución de unidades al anular. La persistencia en MySQL de ventas, historial y dashboard corresponde al siguiente corte.
 
 ## Riesgos controlados desde el inicio
 

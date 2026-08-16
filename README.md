@@ -24,8 +24,26 @@ MVP web para administrar productos, stock y ventas de un único kiosco. El repos
 
 La API queda disponible en `http://localhost:3000/api/v1` y el healthcheck en `http://localhost:3000/health`.
 
+## Modo demostración sin MySQL
+
+Este modo permite recorrer el MVP completo con datos en memoria. En dos terminales ejecutar:
+
+```bash
+npm run demo:backend
+npm run demo:frontend
+```
+
+Abrir `http://127.0.0.1:5173` e ingresar con:
+
+```text
+Email: admin@kiosko.local
+Contraseña: kiosko-demo
+```
+
+Los datos se reinician al detener la API demo. No utilizar este modo en producción.
+
 ## Estado
 
-La base inicial incluye el esquema versionado, seed seguro, autenticación con access/refresh tokens, CRUD lógico de productos y movimientos transaccionales de stock. El siguiente corte implementa la venta atómica y su anulación.
+La base persistente incluye el esquema versionado, seed seguro, autenticación con access/refresh tokens, CRUD lógico de productos y movimientos transaccionales de stock. El modo demo permite además validar productos, stock, venta, historial, anulación y dashboard de punta a punta. El siguiente corte trasladará ventas y dashboard al backend Prisma/MySQL.
 
 Ver [Plan de implementación](docs/PLAN_IMPLEMENTACION.md).
