@@ -23,6 +23,7 @@ h1, h2, strong { font-family: 'Manrope', system-ui, sans-serif; }
 .profile small { color:#91ac9f; margin-top:2px; }
 .profile button { color:#cce0d6; background:none; border:0; cursor:pointer; font-size:18px; }
 .content { min-width:0; }
+.demo-banner { padding:8px 18px; color:#654a00; background:#fff0b8; border-bottom:1px solid #ead27b; text-align:center; font-size:12px; font-weight:700; }
 .page { max-width:1280px; margin:auto; padding:52px 5vw; }
 .page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:34px; }
 .page-header h1 { font-size:38px; letter-spacing:-1.4px; margin-bottom:7px; }

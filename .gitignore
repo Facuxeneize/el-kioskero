@@ -4,6 +4,7 @@ dist/
 .env.*
 !.env.example
 coverage/
+.runtime/
 *.log
 .DS_Store
 .idea/

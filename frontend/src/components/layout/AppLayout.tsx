@@ -25,7 +25,10 @@ export function AppLayout() {
           <button title="Cerrar sesión" onClick={() => void logout()}>↪</button>
         </div>
       </aside>
-      <main className="content"><Outlet /></main>
+      <main className="content">
+        {import.meta.env.VITE_DEMO_MODE === 'true' && <div className="demo-banner">Modo demostración · los datos se reinician al detener el servidor</div>}
+        <Outlet />
+      </main>
     </div>
   )
 }
