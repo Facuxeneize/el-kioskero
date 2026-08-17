@@ -36,7 +36,7 @@ export function SaleDetailPage() {
       {voidSale.isError && <div className="alert">{voidSale.error.message}</div>}
       <section className="panel receipt">
         <div className="receipt-summary"><div><span>Productos</span><strong>{data.items.length}</strong></div><div><span>Unidades</span><strong>{data.totalUnits}</strong></div><div><span>Total</span><strong>{formatMoney(data.total)}</strong></div></div>
-        <div className="table-wrap"><table><thead><tr><th>Producto al vender</th><th>Código</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead><tbody>{data.items.map((item) => <tr key={item.id}><td><strong>{item.productName}</strong></td><td className="mono">{item.barcode}</td><td>{item.quantity}</td><td>{formatMoney(item.unitPrice)}</td><td><strong>{formatMoney(item.subtotal)}</strong></td></tr>)}</tbody></table></div>
+        <div className="table-wrap"><table className="mobile-card-table"><thead><tr><th>Producto al vender</th><th>Código</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead><tbody>{data.items.map((item) => <tr key={item.id}><td data-label="Producto"><strong>{item.productName}</strong></td><td data-label="Código" className="mono">{item.barcode}</td><td data-label="Cantidad">{item.quantity}</td><td data-label="Precio unitario">{formatMoney(item.unitPrice)}</td><td data-label="Subtotal"><strong>{formatMoney(item.subtotal)}</strong></td></tr>)}</tbody></table></div>
         {data.voidedAt && <div className="void-note">Anulada el {formatDateTime(data.voidedAt)}. Esta operación ya no participa del dashboard.</div>}
       </section>
     </div>

@@ -43,6 +43,7 @@ export function LoginPage() {
       </section>
       <section className="login-panel">
         <form className="login-card" onSubmit={handleSubmit(submit)}>
+          <img className="login-card-logo" src={kioskeroLogo} alt="El Kioskero" />
           <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu cuenta de administrador.</p></div>
           <label>Email<input autoFocus autoComplete="email" type="email" {...register('email')} /></label>
           {formState.errors.email && <small className="field-error">{formState.errors.email.message}</small>}

@@ -28,7 +28,6 @@ export function AppLayout() {
         </div>
       </aside>
       <main className="content">
-        {import.meta.env.VITE_DEMO_MODE === 'true' && <div className="demo-banner">Modo demostración · los datos se reinician al detener el servidor</div>}
         <Outlet />
       </main>
     </div>
