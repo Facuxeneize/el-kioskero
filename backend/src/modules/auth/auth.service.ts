@@ -8,6 +8,7 @@ import { createAccessToken, createRefreshToken, hashToken, verifyRefreshToken } 
 const publicUserSelect = {
   id: true,
   name: true,
+  username: true,
   email: true,
   role: true,
   lastLoginAt: true,
@@ -28,12 +29,14 @@ async function persistSession(user: { id: string; role: 'ADMIN' }) {
   return { accessToken: createAccessToken(payload), refreshToken }
 }
 
-export async function login(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
+export async function login(identifier: string, password: string) {
+  const user = await prisma.user.findFirst({
+    where: { OR: [{ email: identifier }, { username: identifier }] },
+  })
   const passwordMatches = user ? await bcrypt.compare(password, user.passwordHash) : false
 
   if (!user || !user.isActive || !passwordMatches) {
-    throw new AppError(401, 'INVALID_CREDENTIALS', 'Email o contraseña incorrectos.')
+    throw new AppError(401, 'INVALID_CREDENTIALS', 'Usuario o contraseña incorrectos.')
   }
 
   const updatedUser = await prisma.user.update({

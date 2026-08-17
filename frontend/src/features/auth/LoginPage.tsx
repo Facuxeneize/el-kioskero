@@ -8,7 +8,7 @@ import kioskeroLogo from '../../assets/kioskero-logo.png'
 import { useAuth } from './auth-context'
 
 const schema = z.object({
-  email: z.email('Ingresá un email válido.'),
+  identifier: z.string().trim().min(1, 'Ingresá tu email o usuario.'),
   password: z.string().min(1, 'Ingresá tu contraseña.'),
 })
 type LoginInput = z.infer<typeof schema>
@@ -26,7 +26,7 @@ export function LoginPage() {
   async function submit(input: LoginInput) {
     setServerError('')
     try {
-      await login(input.email, input.password)
+      await login(input.identifier, input.password)
       const destination = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/'
       navigate(destination, { replace: true })
     } catch (error) {
@@ -45,8 +45,8 @@ export function LoginPage() {
         <form className="login-card" onSubmit={handleSubmit(submit)}>
           <img className="login-card-logo" src={kioskeroLogo} alt="El Kioskero" />
           <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu cuenta de administrador.</p></div>
-          <label>Email<input autoFocus autoComplete="email" type="email" {...register('email')} /></label>
-          {formState.errors.email && <small className="field-error">{formState.errors.email.message}</small>}
+          <label>Email o usuario<input autoFocus autoComplete="username" type="text" {...register('identifier')} /></label>
+          {formState.errors.identifier && <small className="field-error">{formState.errors.identifier.message}</small>}
           <label>Contraseña<div className="password-field"><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} {...register('password')} /><button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Ver'}</button></div></label>
           {formState.errors.password && <small className="field-error">{formState.errors.password.message}</small>}
           {serverError && <div className="alert">{serverError}</div>}

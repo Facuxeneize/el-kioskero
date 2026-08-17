@@ -14,17 +14,55 @@ async function main() {
     where: { email: env.ADMIN_EMAIL.toLowerCase() },
     update: {
       name: env.ADMIN_NAME,
+      username: env.ADMIN_USERNAME.toLowerCase(),
       passwordHash,
       isActive: true,
     },
     create: {
       name: env.ADMIN_NAME,
+      username: env.ADMIN_USERNAME.toLowerCase(),
       email: env.ADMIN_EMAIL.toLowerCase(),
       passwordHash,
     },
   })
 
   console.info(`Administrador preparado: ${env.ADMIN_EMAIL}`)
+
+  const secondaryValues = [
+    env.SECONDARY_USER_NAME,
+    env.SECONDARY_USER_USERNAME,
+    env.SECONDARY_USER_EMAIL,
+    env.SECONDARY_USER_PASSWORD,
+  ]
+  const hasSecondaryUser = secondaryValues.some(Boolean)
+
+  if (hasSecondaryUser && secondaryValues.some((value) => !value)) {
+    throw new Error('Para crear el usuario adicional deben completarse todas las variables SECONDARY_USER_*.')
+  }
+
+  if (hasSecondaryUser) {
+    const username = env.SECONDARY_USER_USERNAME!.toLowerCase()
+    const email = env.SECONDARY_USER_EMAIL!.toLowerCase()
+    const secondaryPasswordHash = await bcrypt.hash(env.SECONDARY_USER_PASSWORD!, 12)
+
+    await prisma.user.upsert({
+      where: { username },
+      update: {
+        name: env.SECONDARY_USER_NAME!,
+        email,
+        passwordHash: secondaryPasswordHash,
+        isActive: true,
+      },
+      create: {
+        name: env.SECONDARY_USER_NAME!,
+        username,
+        email,
+        passwordHash: secondaryPasswordHash,
+      },
+    })
+
+    console.info(`Usuario adicional preparado: ${username}`)
+  }
 }
 
 main()

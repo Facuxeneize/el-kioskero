@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react'
 export interface User {
   id: string
   name: string
+  username: string
   email: string
   role: 'ADMIN'
 }
@@ -10,7 +11,7 @@ export interface User {
 export interface AuthContextValue {
   user: User | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (identifier: string, password: string) => Promise<void>
   logout: () => Promise<void>
 }
 
