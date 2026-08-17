@@ -1,5 +1,7 @@
 # El Kioskero
 
+> Para publicar el sistema, consultar la [guía paso a paso de despliegue en producción](docs/DESPLIEGUE_PRODUCCION.md).
+
 MVP web para administrar productos, stock y ventas de un único kiosco.
 
 El repositorio está organizado como monorepo:
