@@ -11,8 +11,13 @@ const envSchema = z.object({
   JWT_REFRESH_TTL_DAYS: z.coerce.number().int().positive().default(7),
   CORS_ORIGIN: z.string().url().default('http://localhost:5173'),
   ADMIN_NAME: z.string().min(1).default('Administrador'),
+  ADMIN_USERNAME: z.string().min(3).max(60).default('admin'),
   ADMIN_EMAIL: z.email().default('admin@kiosko.local'),
   ADMIN_PASSWORD: z.string().optional(),
+  SECONDARY_USER_NAME: z.string().min(1).optional(),
+  SECONDARY_USER_USERNAME: z.string().min(3).max(60).optional(),
+  SECONDARY_USER_EMAIL: z.email().optional(),
+  SECONDARY_USER_PASSWORD: z.string().min(8).optional(),
 })
 
 const result = envSchema.safeParse(process.env)

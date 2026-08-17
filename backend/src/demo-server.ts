@@ -63,6 +63,7 @@ const now = new Date().toISOString()
 const demoUser = {
   id: '00000000-0000-4000-8000-000000000001',
   name: 'Facundo',
+  username: 'admin',
   email: 'admin@kiosko.local',
   role: 'ADMIN' as const,
   lastLoginAt: now,

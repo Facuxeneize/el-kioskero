@@ -24,9 +24,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(() => ({
     user,
     isLoading,
-    login: async (email, password) => {
+    login: async (identifier, password) => {
       const data = await apiRequest<{ user: User; accessToken: string }>('/auth/login', {
-        method: 'POST', body: JSON.stringify({ email, password }),
+        method: 'POST', body: JSON.stringify({ email: identifier, password }),
       }, false)
       setAccessToken(data.accessToken)
       setUser(data.user)

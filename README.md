@@ -49,6 +49,7 @@ JWT_REFRESH_TTL_DAYS=7
 CORS_ORIGIN=http://localhost:5173
 
 ADMIN_NAME=Administrador
+ADMIN_USERNAME=admin
 ADMIN_EMAIL=admin@kiosko.local
 ADMIN_PASSWORD=una-contraseña-local-de-al-menos-12-caracteres
 ```
@@ -111,7 +112,7 @@ No utilizar `migrate dev` contra producción.
 
 ### 5. Crear o actualizar el administrador
 
-El seed utiliza `ADMIN_NAME`, `ADMIN_EMAIL` y `ADMIN_PASSWORD` de `backend/.env`.
+El seed utiliza `ADMIN_NAME`, `ADMIN_USERNAME`, `ADMIN_EMAIL` y `ADMIN_PASSWORD` de `backend/.env`. También puede crear un usuario adicional si se completan todas las variables `SECONDARY_USER_*` documentadas en `backend/.env.example`.
 
 ```powershell
 npm.cmd run db:seed --workspace backend
@@ -158,7 +159,7 @@ La respuesta debe incluir:
 }
 ```
 
-Para iniciar sesión, utilizar `ADMIN_EMAIL` y `ADMIN_PASSWORD` definidos en `backend/.env`.
+Para iniciar sesión, se puede utilizar `ADMIN_EMAIL` o `ADMIN_USERNAME` junto con `ADMIN_PASSWORD`.
 
 ## Ver las tablas y datos de MySQL
 
@@ -196,7 +197,7 @@ Consultas útiles:
 ```sql
 SHOW TABLES;
 
-SELECT id, name, email, role, is_active, last_login_at
+SELECT id, name, username, email, role, is_active, last_login_at
 FROM users;
 
 SELECT id, barcode, name, sale_price, current_stock,
