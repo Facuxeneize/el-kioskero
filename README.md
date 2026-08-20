@@ -6,7 +6,6 @@ El repositorio está organizado como monorepo:
 
 - `frontend`: React, Vite y TypeScript.
 - `backend`: Express, Prisma, MySQL y TypeScript.
-- `docs`: requisitos, plan incremental y decisiones de implementación.
 
 ## Requisitos
 
