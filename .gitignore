@@ -6,6 +6,7 @@ dist/
 !frontend/.env.demo
 coverage/
 .runtime/
+/docs/
 *.log
 .DS_Store
 .idea/

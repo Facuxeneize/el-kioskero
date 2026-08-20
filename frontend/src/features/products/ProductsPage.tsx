@@ -52,6 +52,17 @@ export function ProductsPage() {
     },
   })
 
+  const activate = useMutation({
+    mutationFn: (id: string) => apiRequest<Product>(`/products/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isActive: true }),
+    }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
+      setMessage('Producto activado nuevamente.')
+    },
+  })
+
   const scanProduct = useMutation({
     mutationFn: (barcode: string) => apiRequest<Product>(`/products/barcode/${encodeURIComponent(barcode)}`),
     onSuccess: (product) => {
@@ -133,7 +144,7 @@ export function ProductsPage() {
           <span>{products.data?.pagination.total ?? 0} productos</span>
         </div>
         {products.isLoading ? <div className="empty">Cargando productos…</div> : products.isError ? <div className="alert panel-alert">{products.error.message}</div> : products.data?.items.length ? (
-          <div className="table-wrap"><table className="mobile-card-table"><thead><tr><th>Producto</th><th>Código</th><th>Precio</th><th>Stock</th><th>Último ingreso</th><th>Estado</th><th></th></tr></thead><tbody>{products.data.items.map((product) => <tr key={product.id}><td data-label="Producto"><strong>{product.name}</strong><small className="cell-note">{product.description}</small></td><td data-label="Código" className="mono">{product.barcode}</td><td data-label="Precio">{formatMoney(product.salePrice)}</td><td data-label="Stock">{product.currentStock}</td><td data-label="Último ingreso">{formatDateTime(product.lastStockInAt)}</td><td data-label="Estado"><span className={!product.isActive ? 'pill neutral' : product.currentStock === 0 ? 'pill danger' : product.currentStock <= product.minimumStock ? 'pill warning' : 'pill success'}>{!product.isActive ? 'Inactivo' : product.currentStock === 0 ? 'Sin stock' : product.currentStock <= product.minimumStock ? 'Stock bajo' : 'Disponible'}</span></td><td data-label="Acciones" className="row-actions"><button onClick={() => openEdit(product)}>Editar</button>{product.isActive && <button className="danger-link" onClick={() => window.confirm(`¿Desactivar ${product.name}?`) && deactivate.mutate(product.id)}>Desactivar</button>}</td></tr>)}</tbody></table></div>
+          <div className="table-wrap"><table className="mobile-card-table"><thead><tr><th>Producto</th><th>Código</th><th>Precio</th><th>Stock</th><th>Último ingreso</th><th>Estado</th><th></th></tr></thead><tbody>{products.data.items.map((product) => <tr key={product.id}><td data-label="Producto"><strong>{product.name}</strong><small className="cell-note">{product.description}</small></td><td data-label="Código" className="mono">{product.barcode}</td><td data-label="Precio">{formatMoney(product.salePrice)}</td><td data-label="Stock">{product.currentStock}</td><td data-label="Último ingreso">{formatDateTime(product.lastStockInAt)}</td><td data-label="Estado"><span className={!product.isActive ? 'pill neutral' : product.currentStock === 0 ? 'pill danger' : product.currentStock <= product.minimumStock ? 'pill warning' : 'pill success'}>{!product.isActive ? 'Inactivo' : product.currentStock === 0 ? 'Sin stock' : product.currentStock <= product.minimumStock ? 'Stock bajo' : 'Disponible'}</span></td><td data-label="Acciones" className="row-actions"><button onClick={() => openEdit(product)}>Editar</button>{product.isActive ? <button className="danger-link" disabled={deactivate.isPending} onClick={() => window.confirm(`¿Desactivar ${product.name}?`) && deactivate.mutate(product.id)}>Desactivar</button> : <button disabled={activate.isPending} onClick={() => window.confirm(`¿Activar nuevamente ${product.name}?`) && activate.mutate(product.id)}>Activar</button>}</td></tr>)}</tbody></table></div>
         ) : <div className="empty"><strong>No hay productos para mostrar</strong><p>Creá el primero para comenzar a controlar el stock.</p></div>}
       </section>
 
