@@ -9,6 +9,7 @@ datasource db {
 
 enum UserRole {
   ADMIN
+  USER
 }
 
 enum SaleStatus {
@@ -33,6 +34,7 @@ model User {
   name          String          @db.VarChar(120)
   username      String          @unique @db.VarChar(60)
   email         String          @unique @db.VarChar(190)
+  kioskName     String          @map("kiosk_name") @db.VarChar(160)
   passwordHash  String          @map("password_hash") @db.VarChar(255)
   role          UserRole        @default(ADMIN)
   isActive      Boolean         @default(true) @map("is_active")

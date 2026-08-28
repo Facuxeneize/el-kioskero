@@ -1,0 +1,7 @@
+ALTER TABLE `users`
+  ADD COLUMN `kiosk_name` VARCHAR(160) NOT NULL DEFAULT 'Mi kiosco',
+  MODIFY COLUMN `role` ENUM('ADMIN', 'USER') NOT NULL DEFAULT 'USER';
+
+UPDATE `users`
+SET `role` = 'ADMIN'
+WHERE `role` = 'ADMIN';

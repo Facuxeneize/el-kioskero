@@ -1,3 +1,4 @@
+import type { UserRole } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
 import { env } from '../../config/env.js'
@@ -10,11 +11,13 @@ const publicUserSelect = {
   name: true,
   username: true,
   email: true,
+  kioskName: true,
   role: true,
+  isActive: true,
   lastLoginAt: true,
 } as const
 
-async function persistSession(user: { id: string; role: 'ADMIN' }) {
+async function persistSession(user: { id: string; role: UserRole }) {
   const payload = { userId: user.id, role: user.role }
   const refreshToken = createRefreshToken(payload)
 
@@ -27,6 +30,30 @@ async function persistSession(user: { id: string; role: 'ADMIN' }) {
   })
 
   return { accessToken: createAccessToken(payload), refreshToken }
+}
+
+export async function registerUser(input: {
+  name: string
+  kioskName: string
+  username: string
+  email: string
+  password: string
+}) {
+  const passwordHash = await bcrypt.hash(input.password, 12)
+  const user = await prisma.user.create({
+    data: {
+      name: input.name,
+      kioskName: input.kioskName,
+      username: input.username,
+      email: input.email,
+      passwordHash,
+      role: 'USER',
+    },
+    select: publicUserSelect,
+  })
+
+  const tokens = await persistSession(user)
+  return { user, ...tokens }
 }
 
 export async function login(identifier: string, password: string) {
