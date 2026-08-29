@@ -13,10 +13,12 @@ const envSchema = z.object({
   ADMIN_NAME: z.string().min(1).default('Administrador'),
   ADMIN_USERNAME: z.string().min(3).max(60).default('admin'),
   ADMIN_EMAIL: z.email().default('admin@kiosko.local'),
+  ADMIN_KIOSK_NAME: z.string().min(1).max(160).default('El Kioskero'),
   ADMIN_PASSWORD: z.string().optional(),
   SECONDARY_USER_NAME: z.string().min(1).optional(),
   SECONDARY_USER_USERNAME: z.string().min(3).max(60).optional(),
   SECONDARY_USER_EMAIL: z.email().optional(),
+  SECONDARY_USER_KIOSK_NAME: z.string().min(1).max(160).optional(),
   SECONDARY_USER_PASSWORD: z.string().min(8).optional(),
 })
 

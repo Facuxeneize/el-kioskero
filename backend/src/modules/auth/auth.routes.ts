@@ -5,8 +5,8 @@ import { env } from '../../config/env.js'
 import { authenticate } from '../../middlewares/authenticate.js'
 import { asyncHandler } from '../../shared/http/async-handler.js'
 import { sendSuccess } from '../../shared/http/response.js'
-import { loginSchema } from './auth.schema.js'
-import { getCurrentUser, login, logout, refreshSession } from './auth.service.js'
+import { loginSchema, registerSchema } from './auth.schema.js'
+import { getCurrentUser, login, logout, refreshSession, registerUser } from './auth.service.js'
 
 const refreshCookie = 'kiosko_refresh'
 const cookieOptions = {
@@ -18,6 +18,17 @@ const cookieOptions = {
 }
 
 export const authRouter = Router()
+
+authRouter.post(
+  '/register',
+  rateLimit({ windowMs: 60 * 60_000, limit: 5, standardHeaders: 'draft-8', legacyHeaders: false }),
+  asyncHandler(async (request, response) => {
+    const input = registerSchema.parse(request.body)
+    const { refreshToken, ...result } = await registerUser(input)
+    response.cookie(refreshCookie, refreshToken, cookieOptions)
+    return sendSuccess(response, result, 201)
+  }),
+)
 
 authRouter.post(
   '/login',

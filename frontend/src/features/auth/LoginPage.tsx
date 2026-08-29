@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
 import kioskeroLogo from '../../assets/kioskero-logo.png'
@@ -44,13 +44,14 @@ export function LoginPage() {
       <section className="login-panel">
         <form className="login-card" onSubmit={handleSubmit(submit)}>
           <img className="login-card-logo" src={kioskeroLogo} alt="El Kioskero" />
-          <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu cuenta de administrador.</p></div>
+          <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu email o nombre de usuario.</p></div>
           <label>Email o usuario<input autoFocus autoComplete="username" type="text" {...register('identifier')} /></label>
           {formState.errors.identifier && <small className="field-error">{formState.errors.identifier.message}</small>}
           <label>Contraseña<div className="password-field"><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} {...register('password')} /><button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Ver'}</button></div></label>
           {formState.errors.password && <small className="field-error">{formState.errors.password.message}</small>}
           {serverError && <div className="alert">{serverError}</div>}
           <button className="button primary" disabled={formState.isSubmitting} type="submit">{formState.isSubmitting ? 'Ingresando…' : 'Ingresar'}</button>
+          <p className="auth-switch">¿Todavía no tenés cuenta? <Link to="/registro">Registrate</Link></p>
         </form>
       </section>
     </main>

@@ -31,6 +31,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(data.accessToken)
       setUser(data.user)
     },
+    register: async (input) => {
+      const data = await apiRequest<{ user: User; accessToken: string }>('/auth/register', {
+        method: 'POST', body: JSON.stringify(input),
+      }, false)
+      setAccessToken(data.accessToken)
+      setUser(data.user)
+    },
     logout: async () => {
       try { await apiRequest('/auth/logout', { method: 'POST' }, false) }
       finally { setAccessToken(null); setUser(null) }

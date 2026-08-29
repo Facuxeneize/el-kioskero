@@ -15,14 +15,18 @@ async function main() {
     update: {
       name: env.ADMIN_NAME,
       username: env.ADMIN_USERNAME.toLowerCase(),
+      kioskName: env.ADMIN_KIOSK_NAME,
       passwordHash,
+      role: 'ADMIN',
       isActive: true,
     },
     create: {
       name: env.ADMIN_NAME,
       username: env.ADMIN_USERNAME.toLowerCase(),
       email: env.ADMIN_EMAIL.toLowerCase(),
+      kioskName: env.ADMIN_KIOSK_NAME,
       passwordHash,
+      role: 'ADMIN',
     },
   })
 
@@ -32,6 +36,7 @@ async function main() {
     env.SECONDARY_USER_NAME,
     env.SECONDARY_USER_USERNAME,
     env.SECONDARY_USER_EMAIL,
+    env.SECONDARY_USER_KIOSK_NAME,
     env.SECONDARY_USER_PASSWORD,
   ]
   const hasSecondaryUser = secondaryValues.some(Boolean)
@@ -50,14 +55,18 @@ async function main() {
       update: {
         name: env.SECONDARY_USER_NAME!,
         email,
+        kioskName: env.SECONDARY_USER_KIOSK_NAME!,
         passwordHash: secondaryPasswordHash,
+        role: 'USER',
         isActive: true,
       },
       create: {
         name: env.SECONDARY_USER_NAME!,
         username,
+        kioskName: env.SECONDARY_USER_KIOSK_NAME!,
         email,
         passwordHash: secondaryPasswordHash,
+        role: 'USER',
       },
     })
 
