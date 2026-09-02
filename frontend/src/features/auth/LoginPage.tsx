@@ -35,24 +35,37 @@ export function LoginPage() {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-brand">
-        <img className="login-logo" src={kioskeroLogo} alt="El Kioskero" />
-        <p className="eyebrow">EL KIOSKERO</p>
-        <h1>Todo el negocio,<br />en un solo lugar.</h1><p>Productos, stock y ventas rápidas. Sin vueltas.</p>
-      </section>
-      <section className="login-panel">
-        <form className="login-card" onSubmit={handleSubmit(submit)}>
-          <img className="login-card-logo" src={kioskeroLogo} alt="El Kioskero" />
-          <div><p className="eyebrow">BIENVENIDO</p><h2>Iniciá sesión</h2><p className="muted">Ingresá con tu email o nombre de usuario.</p></div>
-          <label>Email o usuario<input autoFocus autoComplete="username" type="text" {...register('identifier')} /></label>
-          {formState.errors.identifier && <small className="field-error">{formState.errors.identifier.message}</small>}
-          <label>Contraseña<div className="password-field"><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} {...register('password')} /><button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Ver'}</button></div></label>
-          {formState.errors.password && <small className="field-error">{formState.errors.password.message}</small>}
-          {serverError && <div className="alert">{serverError}</div>}
-          <button className="button primary" disabled={formState.isSubmitting} type="submit">{formState.isSubmitting ? 'Ingresando…' : 'Ingresar'}</button>
-          <p className="auth-switch">¿Todavía no tenés cuenta? <Link to="/registro">Registrate</Link></p>
-        </form>
+    <main className="auth-page">
+      <section className="auth-shell">
+        <aside className="auth-art" aria-label="Navegación de acceso">
+          <div className="auth-art-copy"><span>EL KIOSKERO</span><strong>Tu negocio,<br />más simple.</strong></div>
+          <nav className="auth-tabs">
+            <Link className="active" to="/login">Ingresar</Link>
+            <Link to="/registro">Registrarse</Link>
+          </nav>
+        </aside>
+        <div className="auth-panel">
+          <form className="auth-form" onSubmit={handleSubmit(submit)}>
+            <header className="auth-heading">
+              <div className="auth-logo-wrap"><img src={kioskeroLogo} alt="El Kioskero" /></div>
+              <p className="eyebrow">BIENVENIDO</p><h1>Iniciá sesión</h1><p>Ingresá tus datos para administrar tu kiosco.</p>
+            </header>
+            <div className="auth-control auth-control-with-icon">
+              <span className="auth-control-icon" aria-hidden="true">@</span><label htmlFor="identifier">Email o usuario</label>
+              <input id="identifier" autoFocus autoComplete="username" type="text" {...register('identifier')} />
+            </div>
+            {formState.errors.identifier && <small className="field-error">{formState.errors.identifier.message}</small>}
+            <div className="auth-control auth-control-with-icon auth-password-control">
+              <span className="auth-control-icon" aria-hidden="true">●</span><label htmlFor="password">Contraseña</label>
+              <input id="password" autoComplete="current-password" type={showPassword ? 'text' : 'password'} {...register('password')} />
+              <button type="button" aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Ver'}</button>
+            </div>
+            {formState.errors.password && <small className="field-error">{formState.errors.password.message}</small>}
+            {serverError && <div className="alert">{serverError}</div>}
+            <button className="button primary auth-submit" disabled={formState.isSubmitting} type="submit">{formState.isSubmitting ? 'Ingresando…' : 'Ingresar'}</button>
+            <p className="auth-switch">¿Todavía no tenés cuenta? <Link to="/registro">Registrate</Link></p>
+          </form>
+        </div>
       </section>
     </main>
   )
