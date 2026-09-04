@@ -11,4 +11,5 @@ export const updateUserSchema = z.object({
   email: z.email().trim().max(190).transform((value) => value.toLowerCase()).optional(),
   role: z.enum(['ADMIN', 'USER']).optional(),
   isActive: z.boolean().optional(),
+  password: z.string().min(12).max(128).optional(),
 }).refine((value) => Object.keys(value).length > 0, { message: 'Debés enviar al menos un cambio.' })
