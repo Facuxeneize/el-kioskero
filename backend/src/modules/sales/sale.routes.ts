@@ -20,7 +20,7 @@ saleRouter.get(
   '/',
   asyncHandler(async (request, response) => {
     const input = saleListSchema.parse(request.query)
-    return sendSuccess(response, await listSales(input))
+    return sendSuccess(response, await listSales({ ...input, userId: request.auth!.userId }))
   }),
 )
 
@@ -28,7 +28,7 @@ saleRouter.get(
   '/:id',
   asyncHandler(async (request, response) => {
     const id = saleIdSchema.parse(request.params.id)
-    return sendSuccess(response, await getSale(id))
+    return sendSuccess(response, await getSale(id, request.auth!.userId))
   }),
 )
 

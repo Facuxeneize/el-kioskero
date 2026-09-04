@@ -12,14 +12,14 @@ async function changeStock(input: {
   notes?: string
 }) {
   return prisma.$transaction(async (transaction) => {
-    const product = await transaction.product.findUnique({ where: { id: input.productId } })
+    const product = await transaction.product.findFirst({ where: { id: input.productId, ownerId: input.userId } })
     if (!product) throw new AppError(404, 'PRODUCT_NOT_FOUND', 'Producto no encontrado.')
     if (!product.isActive) throw new AppError(409, 'PRODUCT_INACTIVE', 'El producto está inactivo.')
 
     const stockChange = calculateStockChange(product.currentStock, input.desiredStock(product.currentStock))
 
     const updated = await transaction.product.updateMany({
-      where: { id: product.id, currentStock: product.currentStock },
+      where: { id: product.id, ownerId: input.userId, currentStock: product.currentStock },
       data: { currentStock: stockChange.stockAfter },
     })
     if (updated.count !== 1) {
@@ -63,8 +63,8 @@ export function adjustStock(productId: string, userId: string, actualStock: numb
   })
 }
 
-export async function listStockMovements(input: { productId?: string; page: number; pageSize: number }) {
-  const where = input.productId ? { productId: input.productId } : {}
+export async function listStockMovements(input: { userId: string; productId?: string; page: number; pageSize: number }) {
+  const where = { userId: input.userId, ...(input.productId ? { productId: input.productId } : {}) }
   const [items, total] = await prisma.$transaction([
     prisma.stockMovement.findMany({
       where,

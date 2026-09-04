@@ -24,7 +24,7 @@ productRouter.get(
   '/',
   asyncHandler(async (request, response) => {
     const query = productListSchema.parse(request.query)
-    return sendSuccess(response, await listProducts(query))
+    return sendSuccess(response, await listProducts({ ...query, userId: request.auth!.userId }))
   }),
 )
 
@@ -32,7 +32,7 @@ productRouter.get(
   '/barcode/:barcode',
   asyncHandler(async (request, response) => {
     const barcode = barcodeSchema.parse(request.params.barcode)
-    return sendSuccess(response, await getProductByBarcode(barcode))
+    return sendSuccess(response, await getProductByBarcode(barcode, request.auth!.userId))
   }),
 )
 
@@ -40,7 +40,7 @@ productRouter.get(
   '/:id',
   asyncHandler(async (request, response) => {
     const id = productIdSchema.parse(request.params.id)
-    return sendSuccess(response, await getProduct(id))
+    return sendSuccess(response, await getProduct(id, request.auth!.userId))
   }),
 )
 
@@ -48,7 +48,7 @@ productRouter.post(
   '/',
   asyncHandler(async (request, response) => {
     const input = createProductSchema.parse(request.body)
-    return sendSuccess(response, await createProduct(input), 201)
+    return sendSuccess(response, await createProduct(request.auth!.userId, input), 201)
   }),
 )
 
@@ -57,7 +57,7 @@ productRouter.patch(
   asyncHandler(async (request, response) => {
     const id = productIdSchema.parse(request.params.id)
     const input = updateProductSchema.parse(request.body)
-    return sendSuccess(response, await updateProduct(id, input))
+    return sendSuccess(response, await updateProduct(id, request.auth!.userId, input))
   }),
 )
 
@@ -65,6 +65,6 @@ productRouter.delete(
   '/:id',
   asyncHandler(async (request, response) => {
     const id = productIdSchema.parse(request.params.id)
-    return sendSuccess(response, await deactivateProduct(id))
+    return sendSuccess(response, await deactivateProduct(id, request.auth!.userId))
   }),
 )

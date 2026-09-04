@@ -4,12 +4,14 @@ import { prisma } from '../../config/database.js'
 import { AppError } from '../../shared/errors/app-error.js'
 
 export async function listProducts(input: {
+  userId: string
   search?: string
   active?: boolean
   page: number
   pageSize: number
 }) {
   const where: Prisma.ProductWhereInput = {
+    ownerId: input.userId,
     ...(input.active === undefined ? {} : { isActive: input.active }),
     ...(input.search
       ? {
@@ -48,30 +50,30 @@ export async function listProducts(input: {
   }
 }
 
-export async function getProduct(id: string) {
-  const product = await prisma.product.findUnique({ where: { id } })
+export async function getProduct(id: string, userId: string) {
+  const product = await prisma.product.findFirst({ where: { id, ownerId: userId } })
   if (!product) throw new AppError(404, 'PRODUCT_NOT_FOUND', 'Producto no encontrado.')
   return product
 }
 
-export async function getProductByBarcode(barcode: string) {
-  const product = await prisma.product.findUnique({ where: { barcode } })
+export async function getProductByBarcode(barcode: string, userId: string) {
+  const product = await prisma.product.findUnique({ where: { ownerId_barcode: { ownerId: userId, barcode } } })
   if (!product || !product.isActive) {
     throw new AppError(404, 'PRODUCT_NOT_FOUND', 'Producto no encontrado.')
   }
   return product
 }
 
-export function createProduct(data: Prisma.ProductCreateInput) {
-  return prisma.product.create({ data })
+export function createProduct(userId: string, data: Omit<Prisma.ProductUncheckedCreateInput, 'ownerId'>) {
+  return prisma.product.create({ data: { ...data, ownerId: userId } })
 }
 
-export async function updateProduct(id: string, data: Prisma.ProductUpdateInput) {
-  await getProduct(id)
+export async function updateProduct(id: string, userId: string, data: Prisma.ProductUpdateInput) {
+  await getProduct(id, userId)
   return prisma.product.update({ where: { id }, data })
 }
 
-export async function deactivateProduct(id: string) {
-  await getProduct(id)
+export async function deactivateProduct(id: string, userId: string) {
+  await getProduct(id, userId)
   return prisma.product.update({ where: { id }, data: { isActive: false } })
 }

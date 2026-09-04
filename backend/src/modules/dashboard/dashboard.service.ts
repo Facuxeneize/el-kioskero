@@ -2,16 +2,16 @@ import { prisma } from '../../config/database.js'
 import { businessDayRange, currentBusinessDate } from '../../shared/utils/business-date.js'
 import { saleSelect, serializeSale } from '../sales/sale.service.js'
 
-export async function getDashboardSummary() {
+export async function getDashboardSummary(userId: string) {
   const range = businessDayRange(currentBusinessDate())
   const [today, activeProducts] = await prisma.$transaction([
     prisma.sale.aggregate({
-      where: { status: 'COMPLETED', createdAt: { gte: range.from, lt: range.to } },
+      where: { createdById: userId, status: 'COMPLETED', createdAt: { gte: range.from, lt: range.to } },
       _sum: { total: true, totalUnits: true },
       _count: { _all: true },
     }),
     prisma.product.findMany({
-      where: { isActive: true },
+      where: { ownerId: userId, isActive: true },
       select: { currentStock: true, minimumStock: true },
     }),
   ])
@@ -25,16 +25,16 @@ export async function getDashboardSummary() {
   }
 }
 
-export async function getTopProducts() {
+export async function getTopProducts(userId: string) {
   const grouped = await prisma.saleItem.groupBy({
     by: ['productId'],
-    where: { sale: { status: 'COMPLETED' } },
+    where: { sale: { createdById: userId, status: 'COMPLETED' } },
     _sum: { quantity: true },
     orderBy: { _sum: { quantity: 'desc' } },
     take: 5,
   })
   const products = await prisma.product.findMany({
-    where: { id: { in: grouped.map((item) => item.productId) } },
+    where: { ownerId: userId, id: { in: grouped.map((item) => item.productId) } },
     select: { id: true, name: true },
   })
   const namesById = new Map(products.map((product) => [product.id, product.name]))
@@ -46,8 +46,9 @@ export async function getTopProducts() {
   }))
 }
 
-export async function getRecentSales() {
+export async function getRecentSales(userId: string) {
   const sales = await prisma.sale.findMany({
+    where: { createdById: userId },
     orderBy: { createdAt: 'desc' },
     take: 5,
     select: saleSelect,

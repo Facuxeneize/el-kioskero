@@ -12,7 +12,7 @@ stockRouter.get(
   '/movements',
   asyncHandler(async (request, response) => {
     const input = stockMovementListSchema.parse(request.query)
-    return sendSuccess(response, await listStockMovements(input))
+    return sendSuccess(response, await listStockMovements({ ...input, userId: request.auth!.userId }))
   }),
 )
 
@@ -23,7 +23,7 @@ productStockRouter.get(
   asyncHandler(async (request, response) => {
     const productId = productIdSchema.parse(request.params.id)
     const input = stockMovementListSchema.omit({ productId: true }).parse(request.query)
-    return sendSuccess(response, await listStockMovements({ ...input, productId }))
+    return sendSuccess(response, await listStockMovements({ ...input, productId, userId: request.auth!.userId }))
   }),
 )
 

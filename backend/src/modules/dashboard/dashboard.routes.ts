@@ -8,15 +8,15 @@ export const dashboardRouter = Router()
 
 dashboardRouter.get(
   '/summary',
-  asyncHandler(async (_request, response) => sendSuccess(response, await getDashboardSummary())),
+  asyncHandler(async (request, response) => sendSuccess(response, await getDashboardSummary(request.auth!.userId))),
 )
 
 dashboardRouter.get(
   '/top-products',
-  asyncHandler(async (_request, response) => sendSuccess(response, await getTopProducts())),
+  asyncHandler(async (request, response) => sendSuccess(response, await getTopProducts(request.auth!.userId))),
 )
 
 dashboardRouter.get(
   '/recent-sales',
-  asyncHandler(async (_request, response) => sendSuccess(response, await getRecentSales())),
+  asyncHandler(async (request, response) => sendSuccess(response, await getRecentSales(request.auth!.userId))),
 )

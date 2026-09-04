@@ -62,7 +62,10 @@ async function serializableTransaction<T>(operation: (transaction: Prisma.Transa
 
 export async function createSale(userId: string, requestedItems: RequestedSaleItem[], idempotencyKey?: string) {
   if (idempotencyKey) {
-    const existing = await prisma.sale.findUnique({ where: { idempotencyKey }, select: saleSelect })
+    const existing = await prisma.sale.findUnique({
+      where: { createdById_idempotencyKey: { createdById: userId, idempotencyKey } },
+      select: saleSelect,
+    })
     if (existing) return serializeSale(existing)
   }
 
@@ -71,12 +74,15 @@ export async function createSale(userId: string, requestedItems: RequestedSaleIt
   try {
     const sale = await serializableTransaction(async (transaction) => {
       if (idempotencyKey) {
-        const existing = await transaction.sale.findUnique({ where: { idempotencyKey }, select: saleSelect })
+        const existing = await transaction.sale.findUnique({
+          where: { createdById_idempotencyKey: { createdById: userId, idempotencyKey } },
+          select: saleSelect,
+        })
         if (existing) return existing
       }
 
       const products = await transaction.product.findMany({
-        where: { id: { in: consolidatedItems.map((item) => item.productId) } },
+        where: { ownerId: userId, id: { in: consolidatedItems.map((item) => item.productId) } },
       })
       const productsById = new Map(products.map((product) => [product.id, product]))
       let total = new Prisma.Decimal(0)
@@ -117,7 +123,7 @@ export async function createSale(userId: string, requestedItems: RequestedSaleIt
       for (const { product, quantity } of preparedItems) {
         const stockAfter = product.currentStock - quantity
         const update = await transaction.product.updateMany({
-          where: { id: product.id, isActive: true, currentStock: { gte: quantity } },
+          where: { id: product.id, ownerId: userId, isActive: true, currentStock: { gte: quantity } },
           data: { currentStock: { decrement: quantity } },
         })
         if (update.count !== 1) {
@@ -146,7 +152,10 @@ export async function createSale(userId: string, requestedItems: RequestedSaleIt
   } catch (error) {
     const isUniqueConflict = error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
     if (isUniqueConflict && idempotencyKey) {
-      const existing = await prisma.sale.findUnique({ where: { idempotencyKey }, select: saleSelect })
+      const existing = await prisma.sale.findUnique({
+        where: { createdById_idempotencyKey: { createdById: userId, idempotencyKey } },
+        select: saleSelect,
+      })
       if (existing) return serializeSale(existing)
     }
     throw error
@@ -154,6 +163,7 @@ export async function createSale(userId: string, requestedItems: RequestedSaleIt
 }
 
 export async function listSales(input: {
+  userId: string
   status?: SaleStatus
   dateFrom?: string
   dateTo?: string
@@ -164,6 +174,7 @@ export async function listSales(input: {
   if (input.dateFrom) createdAt.gte = businessDayRange(input.dateFrom).from
   if (input.dateTo) createdAt.lt = businessDayRange(input.dateTo).to
   const where: Prisma.SaleWhereInput = {
+    createdById: input.userId,
     ...(input.status ? { status: input.status } : {}),
     ...(Object.keys(createdAt).length ? { createdAt } : {}),
   }
@@ -184,22 +195,22 @@ export async function listSales(input: {
   }
 }
 
-export async function getSale(id: string) {
-  const sale = await prisma.sale.findUnique({ where: { id }, select: saleSelect })
+export async function getSale(id: string, userId: string) {
+  const sale = await prisma.sale.findFirst({ where: { id, createdById: userId }, select: saleSelect })
   if (!sale) throw new AppError(404, 'SALE_NOT_FOUND', 'Venta no encontrada.')
   return serializeSale(sale)
 }
 
 export async function voidSale(id: string, userId: string) {
   const sale = await serializableTransaction(async (transaction) => {
-    const currentSale = await transaction.sale.findUnique({ where: { id }, select: saleSelect })
+    const currentSale = await transaction.sale.findFirst({ where: { id, createdById: userId }, select: saleSelect })
     if (!currentSale) throw new AppError(404, 'SALE_NOT_FOUND', 'Venta no encontrada.')
     if (currentSale.status === 'VOIDED') {
       throw new AppError(409, 'SALE_ALREADY_VOIDED', 'La venta ya fue anulada.')
     }
 
     const statusUpdate = await transaction.sale.updateMany({
-      where: { id, status: 'COMPLETED' },
+      where: { id, createdById: userId, status: 'COMPLETED' },
       data: { status: 'VOIDED', voidedAt: new Date() },
     })
     if (statusUpdate.count !== 1) {
@@ -207,7 +218,7 @@ export async function voidSale(id: string, userId: string) {
     }
 
     for (const item of currentSale.items) {
-      const product = await transaction.product.findUnique({ where: { id: item.productId } })
+      const product = await transaction.product.findFirst({ where: { id: item.productId, ownerId: userId } })
       if (!product) throw new AppError(409, 'PRODUCT_NOT_FOUND', 'No se puede restituir un producto inexistente.')
       const stockAfter = product.currentStock + item.quantity
       await transaction.product.update({
